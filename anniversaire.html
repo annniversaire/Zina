@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Jeu anniversaire</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #efe6d5;
+  color: #27231e;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+
+/* =========================
+   ÉCRAN ENVELOPPE
+========================= */
+
+#envelopeScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #efe6d5;
+  transition: opacity .7s ease, visibility .7s ease;
+}
+
+#envelopeScreen.opening {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.envelope-wrapper {
+  width: min(90vw, 440px);
+  text-align: center;
+}
+
+.envelope-title {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 28px;
+  margin-bottom: 35px;
+}
+
+.envelope {
+  position: relative;
+  width: 320px;
+  height: 210px;
+  margin: auto;
+  cursor: pointer;
+  perspective: 1000px;
+  filter: drop-shadow(0 18px 25px rgba(60,45,25,.16));
+  animation: envelopeVibrate 1.9s infinite;
+}
+
+/* Corps de l'enveloppe */
+.envelope-back {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #f8eee0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+/* Lettre */
+.letter {
+  position: absolute;
+  z-index: 2;
+  width: 250px;
+  height: 175px;
+  left: 35px;
+  top: 25px;
+  background: #fffaf1;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(60,45,25,.10);
+  transform: translateY(0) scale(.98);
+  transition:
+    transform 1.15s .18s cubic-bezier(.16,.84,.25,1),
+    box-shadow 1.15s ease;
+}
+
+.letter::before {
+  content: "🎉";
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%,-50%);
+  font-family: Georgia, serif;
+  font-size: 40px;
+  color: #786f63;
+}
+
+/* Rabat supérieur */
+.flap {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-left: 160px solid transparent;
+  border-right: 160px solid transparent;
+  border-top: 115px solid #eadbc8;
+  transform-origin: top center;
+  backface-visibility: hidden;
+  transition: transform 1s cubic-bezier(.18,.82,.22,1);
+}
+
+/* Partie basse */
+.envelope-front {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 160px solid transparent;
+  border-right: 160px solid transparent;
+  border-bottom: 115px solid #f1e3d1;
+}
+
+/* Rabat gauche */
+.side-left {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 105px solid transparent;
+  border-left: 160px solid #eadbc8;
+  border-bottom: 105px solid transparent;
+}
+
+/* Rabat droit */
+.side-right {
+  position: absolute;
+  z-index: 6;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 105px solid transparent;
+  border-right: 160px solid #eadbc8;
+  border-bottom: 105px solid transparent;
+}
+
+/* Sceau */
+.seal {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #D8C8AE;
+  color: white;
+  font-size: 25px;
+  box-shadow: 0 5px 12px rgba(0,0,0,.15);
+  transition:
+    opacity .45s ease,
+    transform .7s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Ouverture en plusieurs temps */
+.envelope.open {
+  animation: none;
+}
+
+.envelope.open .seal {
+  opacity: 0;
+  transform:
+    translate(-50%,-50%)
+    scale(1.45)
+    rotate(18deg);
+}
+
+.envelope.open .flap {
+  transform:
+    rotateX(180deg)
+    translateY(-6px);
+}
+
+.envelope.open .letter {
+  transform:
+    translateY(-145px)
+    scale(1);
+  box-shadow:
+    0 18px 30px rgba(60,45,25,.18);
+}
+
+/* Vibration des boutons */
+#yes.vibrate,
+#no.vibrate {
+  position: relative;
+  animation: buttonVibrate .55s linear infinite !important;
+  will-change: left, top;
+}
+
+@keyframes buttonVibrate {
+  0%,100% { left:0; top:0; }
+  10% { left:-4px; }
+  20% { left:4px; }
+  30% { left:-4px; }
+  40% { left:4px; }
+  50% { left:-3px; top:1px; }
+  60% { left:3px; top:-1px; }
+  70% { left:-3px; }
+  80% { left:2px; }
+  90% { left:-1px; }
+}
+
+.click-hint {
+  margin-top: 35px;
+  color: #786f63;
+  font-size: 14px;
+  animation: hintPulse 2s infinite;
+}
+
+@keyframes envelopeVibrate {
+  0%,75%,100% {
+    transform: rotate(0deg) translateX(0);
+  }
+  77% {
+    transform: rotate(-1.5deg) translateX(-2px);
+  }
+  79% {
+    transform: rotate(1.5deg) translateX(2px);
+  }
+  81% {
+    transform: rotate(-1deg) translateX(-1px);
+  }
+  83% {
+    transform: rotate(0deg) translateX(0);
+  }
+}
+
+@keyframes hintPulse {
+  0%,100% { opacity:.55; }
+  50% { opacity:1; }
+}
+
+/* =========================
+   PAGE FINALE
+========================= */
+
+#invitationPage {
+  min-height: 100vh;
+
+  opacity: 0;
+
+  transform:
+    translateY(25px);
+
+  transition:
+    opacity .8s ease .35s,
+    transform .8s ease .35s;
+}
+
+#invitationPage.visible {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+.page {
+  min-height: 100vh;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+
+  background: #fffaf1;
+
+  border-radius: 28px;
+
+  padding: 55px 40px;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 60px rgba(60,45,25,.12);
+}
+
+.heart {
+  font-size: 55px;
+
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-family: Georgia, serif;
+
+  font-size: 45px;
+
+  font-style: italic;
+
+  margin:
+    0 0 18px;
+}
+
+.message {
+  font-size: 18px;
+
+  line-height: 1.7;
+
+  color: #514a41;
+
+  margin:
+    0 auto 25px;
+
+  max-width: 480px;
+}
+
+.date {
+  font-weight: bold;
+
+  font-size: 16px;
+
+  margin-bottom: 35px;
+}
+
+
+/* =========================
+   BOUTONS
+========================= */
+
+.buttons {
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 15px;
+
+  min-height: 55px;
+}
+
+button {
+
+  border: none;
+
+  border-radius: 14px;
+
+  padding:
+    15px 28px;
+
+  font-size: 15px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+
+/*
+   Oui
+*/
+
+#no {
+
+  background: #A8D5BA;
+
+  color: #27231e;
+
+  transition:
+    transform .25s ease;
+}
+
+
+/*
+   Non
+*/
+
+#yes {
+
+  background: #8B3A3A;
+
+  color: white;
+}
+
+
+/* Message après les tentatives */
+
+.too-late {
+
+  margin-top: 25px;
+
+  font-family: Georgia, serif;
+
+  font-size: 26px;
+
+  font-style: italic;
+
+  animation:
+    appear .3s ease;
+}
+
+.too-late span {
+
+  display: block;
+
+  margin-top: 8px;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 14px;
+
+  font-style: normal;
+
+  color: #786f63;
+}
+
+
+/* =========================
+   POPUP
+========================= */
+
+.popup-overlay {
+
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(39,35,30,.48);
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  z-index: 3000;
+}
+
+.popup {
+
+  width: min(90%, 420px);
+
+  background: #fffaf1;
+
+  border-radius: 24px;
+
+  padding: 38px 30px;
+
+  text-align: center;
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.25);
+
+  animation:
+    popupIn .25s ease;
+}
+
+.popup-icon {
+
+  font-size: 43px;
+
+  margin-bottom: 12px;
+}
+
+.popup h2 {
+
+  font-family: Georgia, serif;
+
+  font-style: italic;
+
+  font-size: 30px;
+
+  margin:
+    0 0 10px;
+}
+
+.popup p {
+
+  color: #786f63;
+
+  line-height: 1.5;
+
+  margin:
+    0 0 25px;
+}
+
+.popup button {
+
+  background: #27231e;
+
+  color: white;
+}
+
+
+/* =========================
+   ANIMATIONS POPUP
+========================= */
+
+@keyframes popupIn {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      scale(.9);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
+}
+
+@keyframes appear {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(8px);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  .envelope {
+
+    width: 280px;
+
+    height: 185px;
+  }
+
+  .flap {
+
+    border-left-width: 140px;
+
+    border-right-width: 140px;
+
+    border-top-width: 100px;
+  }
+
+  .envelope-front {
+
+    border-left-width: 140px;
+
+    border-right-width: 140px;
+
+    border-bottom-width: 100px;
+  }
+
+  .side-left {
+
+    border-left-width: 140px;
+
+    border-top-width: 92px;
+
+    border-bottom-width: 92px;
+  }
+
+  .side-right {
+
+    border-right-width: 140px;
+
+    border-top-width: 92px;
+
+    border-bottom-width: 92px;
+  }
+
+  .letter {
+
+    width: 220px;
+
+    height: 155px;
+
+    left: 30px;
+  }
+
+  .card {
+
+    padding:
+      45px 25px;
+  }
+
+  h1 {
+
+    font-size: 38px;
+  }
+
+  .message {
+
+    font-size: 16px;
+  }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     ÉCRAN ENVELOPPE
+========================= -->
+
+<div id="envelopeScreen">
+
+  <div class="envelope-wrapper">
+
+    <div class="envelope-title">
+
+      Hey Aurore ! Tu as reçu un message
+      de la plus haute importance d'Abdelheq
+
+    </div>
+
+
+    <div id="envelope" class="envelope">
+
+      <div class="envelope-back"></div>
+
+      <div class="letter"></div>
+
+      <div class="flap"></div>
+
+      <div class="envelope-front"></div>
+
+      <div class="side-left"></div>
+
+      <div class="side-right"></div>
+
+      <div class="seal">
+        🤔
+      </div>
+
+    </div>
+
+
+    <div class="click-hint">
+
+      Clique sur l'enveloppe pour l'ouvrir
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================
+     INVITATION
+========================= -->
+
+<div id="invitationPage">
+
+  <div class="page">
+
+    <div class="card">
+
+
+      <div class="heart">
+      </div>
+
+
+      <div class="date">
+
+        Nous sommes le [25/12/2026]
+        jour de ton 🎂.
+        Je te propose un jeu :
+
+      </div>
+
+
+      <p class="message">
+
+        Je t’offre un cadeau si tu cliques sur
+        <b>Oui</b> !
+
+        Mais si, par malheur,
+        tu cliques sur <b>Non</b>,
+
+        <u>tu m’offres</u> un cadeau !
+
+      </p>
+
+
+      <div id="tooLate"></div>
+
+      <br>
+
+
+      <div class="buttons">
+
+
+        <!--
+          ATTENTION :
+          Ce bouton vert est "Oui"
+          mais son id est "no"
+        -->
+
+        <button id="no">
+          Oui 😍
+        </button>
+
+
+        <!--
+          Ce bouton rouge est "Non"
+          mais son id est "yes"
+        -->
+
+        <button id="yes">
+          Non ☹️
+        </button>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================
+     POPUP
+========================= -->
+
+<div id="responsePopup" class="popup-overlay">
+
+  <div class="popup">
+
+    <div class="popup-icon">
+
+      Happy Birthday !!! 🎂🎉😊
+
+    </div>
+
+
+    <p>
+
+      Viens récupérer ton cadeau quand même 🎁
+
+    </p>
+
+
+    <button id="closePopup">
+
+      Fermer
+
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   RÉFÉRENCES
+========================= */
+
+const envelope =
+  document.getElementById("envelope");
+
+const envelopeScreen =
+  document.getElementById("envelopeScreen");
+
+const invitationPage =
+  document.getElementById("invitationPage");
+
+
+/*
+   IMPORTANT :
+
+   Oui = id="no"
+   Non = id="yes"
+*/
+
+const noButton =
+  document.getElementById("no");
+
+const yesButton =
+  document.getElementById("yes");
+
+const tooLate =
+  document.getElementById("tooLate");
+
+
+/* =========================
+   OUVERTURE ENVELOPPE
+========================= */
+
+envelope.addEventListener(
+  "click",
+  function () {
+
+
+    /*
+       Empêche plusieurs clics
+    */
+
+    if (
+      envelope.classList.contains("open")
+    ) {
+
+      return;
+
+    }
+
+
+    /*
+       Ouvre l'enveloppe
+    */
+
+    envelope.classList.add("open");
+
+
+    /*
+       ⭐ FAIT VIBRER LE BOUTON VERT OUI
+    */
+
+    noButton.classList.remove("vibrate");
+
+    /*
+       Force le navigateur à recalculer
+       l'élément avant de relancer
+       l'animation.
+    */
+
+    void noButton.offsetWidth;
+
+    noButton.classList.add("vibrate");
+
+
+    /*
+       Après l'ouverture :
+       affiche la page.
+    */
+
+    setTimeout(
+      function () {
+
+        envelopeScreen.classList.add(
+          "opening"
+        );
+
+        invitationPage.classList.add(
+          "visible"
+        );
+
+      },
+      850
+    );
+
+  }
+);
+
+
+
+/* =========================
+   BOUTON NON
+========================= */
+
+let attempts = 0;
+
+
+function escapeNo() {
+
+  attempts++;
+
+
+  /*
+     À la 5e tentative
+  */
+
+if (attempts >= 5) {
+
+  tooLate.innerHTML = `
+    <div class="too-late">
+      Oh quel dommage 😁😊😂
+      <span>
+        Tu n'as plus le choix que de cliquer sur Non.
+      </span>
+    </div>
+  `;
+
+  // Faire disparaître le bouton Oui
+  noButton.style.display = "none";
+
+  // Garder le bouton Non visible
+  yesButton.style.display = "inline-block";
+
+  // Relancer proprement l'animation
+  yesButton.classList.remove("vibrate");
+  void yesButton.offsetWidth;
+  //yesButton.classList.add("vibrate");
+
+  return;
+}
+
+
+  /*
+     Le bouton Oui devient
+     plus petit à chaque tentative.
+  */
+
+  const scale =
+    1 - (attempts * .18);
+
+
+  /*
+     Et il s'éloigne.
+  */
+
+  const x =
+    Math.random() * 180 - 90;
+
+  const y =
+    Math.random() * 80 - 40;
+
+
+  noButton.style.transform =
+    `translate(${x}px, ${y}px) scale(${scale})`;
+
+}
+
+
+noButton.addEventListener(
+  "mouseenter",
+  escapeNo
+);
+
+
+noButton.addEventListener(
+  "click",
+  escapeNo
+);
+
+
+
+/* =========================
+   BOUTON OUI
+========================= */
+
+const responsePopup =
+  document.getElementById(
+    "responsePopup"
+  );
+
+const closePopup =
+  document.getElementById(
+    "closePopup"
+  );
+
+
+yesButton.addEventListener(
+  "click",
+  function () {
+
+    responsePopup.style.display =
+      "flex";
+
+    yesButton.style.display =
+      "none";
+
+    noButton.style.display =
+      "none";
+
+    tooLate.innerHTML = "";
+
+  }
+);
+
+
+
+/* =========================
+   FERMER POPUP
+========================= */
+
+closePopup.addEventListener(
+  "click",
+  function () {
+
+
+    responsePopup.style.display =
+      "none";
+
+
+    /*
+       Après fermeture :
+       uniquement le message
+       Joyeux anniversaire.
+    */
+
+    invitationPage.innerHTML = `
+
+      <div class="page">
+
+        <div class="card">
+
+          <h1>
+            Joyeux anniversaire Aurore! 🎂🎉
+          </h1>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+);
+
+
+</script>
+
+
+</body>
+</html>
