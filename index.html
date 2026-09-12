@@ -697,6 +697,32 @@ button {
 }
 
 
+
+/* Hover contraste inverse — tous les boutons sauf le « Oui qui fuit » (#no) */
+button:not(#no),
+.donate-link {
+  transition: background .2s ease, color .2s ease, border-color .2s ease,
+              transform .2s ease, box-shadow .2s ease;
+}
+
+button:not(#no):hover,
+.donate-link:hover {
+  background: #fff !important;
+  color: #27231e !important;
+  border: 2px solid #27231e !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.18);
+}
+
+button:not(#no):hover *,
+.donate-link:hover * {
+  color: #27231e !important;
+}
+
+/* Le bouton « Oui qui fuit » conserve exactement son comportement */
+#no:hover {
+  border-color: initial;
+}
 </style>
 
 </head>
@@ -913,7 +939,8 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
       }
 
       if (popupButton) {
-        popupButton.textContent = "Aller arrête de cliquer maintenant, stp 🙏!!!";
+        popupButton.textContent = "Aller arrête de cliquer maintenant, stp 🙏";
+        popupButton.classList.add("inverse-hover");
       }
     });
 
