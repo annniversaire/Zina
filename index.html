@@ -620,7 +620,58 @@ button {
   box-shadow: 0 7px 18px rgba(0,0,0,.18);
 }
 .paypal-mark { font-size: 14px; color: #003087; }
+.message {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #514a41;
+  margin: 0 auto 25px;
+  max-width: 500px;
+}
 
+.intro-message {
+  margin: 0 0 22px;
+  font-size: 18px;
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  text-align: left;
+  padding: 14px 16px;
+  margin: 12px 0;
+  border-radius: 16px;
+  background: #f8f1e6;
+}
+
+.choice-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.choice b {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.choice p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.choice span {
+  font-size: 14px;
+  color: #786f63;
+}
+
+.yes-choice {
+  border-left: 4px solid #A8D5BA;
+}
+
+.no-choice {
+  border-left: 4px solid #8B3A3A;
+}
 </style>
 
 </head>
@@ -708,21 +759,34 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
 
       </div>
 
+      <div class="message">
 
-      <p class="message">
-        Tu dois <u>obligatoirement</u> cliquer sur un <b>Oui</b> ou un <b>Non</b><BR>
+  <p class="intro-message">
+    Tu dois <u>obligatoirement</u> cliquer sur un
+    <b>Oui</b> ou un <b>Non</b> 😈
+  </p>
+
+  <div class="choice yes-choice">
+    <span class="choice-icon">🎁</span>
+    <div>
+      <b>Si tu cliques sur Oui</b>
+      <p>
+        Je t’offre un cadeau :
       </p>
+    </div>
+  </div>
 
-      Je t’offre un cadeau si tu cliques sur
-      <b>Oui</b> !
-
-      Mais si par malheur,
-      tu cliques sur <b>Non</b>,
-
-      <u>tu m’offres</u> un cadeau !
-
+  <div class="choice no-choice">
+    <span class="choice-icon">😈</span>
+    <div>
+      <b>Mais si tu cliques sur Non</b>
+      <p>
+        <u>Tu m’offres un cadeau !</u> 🎁
       </p>
+    </div>
+  </div>
 
+</div>
 
       <div id="tooLate"></div>
 
