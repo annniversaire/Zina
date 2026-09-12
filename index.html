@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -65,7 +66,9 @@ body {
   animation: envelopeVibrate 1.9s infinite;
 }
 
+
 /* Corps de l'enveloppe */
+
 .envelope-back {
   position: absolute;
   inset: 0;
@@ -75,7 +78,9 @@ body {
   overflow: hidden;
 }
 
+
 /* Lettre */
+
 .letter {
   position: absolute;
   z-index: 2;
@@ -103,7 +108,9 @@ body {
   color: #786f63;
 }
 
+
 /* Rabat supérieur */
+
 .flap {
   position: absolute;
   z-index: 8;
@@ -119,7 +126,9 @@ body {
   transition: transform 1s cubic-bezier(.18,.82,.22,1);
 }
 
+
 /* Partie basse */
+
 .envelope-front {
   position: absolute;
   z-index: 5;
@@ -132,7 +141,9 @@ body {
   border-bottom: 115px solid #f1e3d1;
 }
 
+
 /* Rabat gauche */
+
 .side-left {
   position: absolute;
   z-index: 6;
@@ -145,7 +156,9 @@ body {
   border-bottom: 105px solid transparent;
 }
 
+
 /* Rabat droit */
+
 .side-right {
   position: absolute;
   z-index: 6;
@@ -158,7 +171,9 @@ body {
   border-bottom: 105px solid transparent;
 }
 
+
 /* Sceau */
+
 .seal {
   position: absolute;
   z-index: 10;
@@ -179,7 +194,9 @@ body {
     transform .7s cubic-bezier(.2,.8,.2,1);
 }
 
+
 /* Ouverture en plusieurs temps */
+
 .envelope.open {
   animation: none;
 }
@@ -206,7 +223,9 @@ body {
     0 18px 30px rgba(60,45,25,.18);
 }
 
+
 /* Vibration des boutons */
+
 #yes.vibrate,
 #no.vibrate {
   position: relative;
@@ -238,15 +257,19 @@ body {
   0%,75%,100% {
     transform: rotate(0deg) translateX(0);
   }
+
   77% {
     transform: rotate(-1.5deg) translateX(-2px);
   }
+
   79% {
     transform: rotate(1.5deg) translateX(2px);
   }
+
   81% {
     transform: rotate(-1deg) translateX(-1px);
   }
+
   83% {
     transform: rotate(0deg) translateX(0);
   }
@@ -257,18 +280,16 @@ body {
   50% { opacity:1; }
 }
 
+
 /* =========================
    PAGE FINALE
 ========================= */
 
 #invitationPage {
   min-height: 100vh;
-
   opacity: 0;
-
   transform:
     translateY(25px);
-
   transition:
     opacity .8s ease .35s,
     transform .8s ease .35s;
@@ -276,73 +297,54 @@ body {
 
 #invitationPage.visible {
   opacity: 1;
-
   transform:
     translateY(0);
 }
 
 .page {
   min-height: 100vh;
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   padding: 25px;
 }
 
 .card {
   width: 100%;
   max-width: 600px;
-
   background: #fffaf1;
-
   border-radius: 28px;
-
   padding: 55px 40px;
-
   text-align: center;
-
   box-shadow:
     0 20px 60px rgba(60,45,25,.12);
 }
 
 .heart {
   font-size: 55px;
-
   margin-bottom: 10px;
 }
 
 h1 {
   font-family: Georgia, serif;
-
   font-size: 45px;
-
   font-style: italic;
-
   margin:
     0 0 18px;
 }
 
 .message {
   font-size: 18px;
-
   line-height: 1.7;
-
   color: #514a41;
-
   margin:
     0 auto 25px;
-
   max-width: 480px;
 }
 
 .date {
   font-weight: bold;
-
   font-size: 16px;
-
   margin-bottom: 35px;
 }
 
@@ -352,29 +354,19 @@ h1 {
 ========================= */
 
 .buttons {
-
   display: flex;
-
   justify-content: center;
-
   gap: 15px;
-
   min-height: 55px;
 }
 
 button {
-
   border: none;
-
   border-radius: 14px;
-
   padding:
     15px 28px;
-
   font-size: 15px;
-
   font-weight: bold;
-
   cursor: pointer;
 }
 
@@ -384,11 +376,8 @@ button {
 */
 
 #no {
-
   background: #A8D5BA;
-
   color: #27231e;
-
   transition:
     transform .25s ease;
 }
@@ -399,9 +388,7 @@ button {
 */
 
 #yes {
-
   background: #8B3A3A;
-
   color: white;
 }
 
@@ -409,31 +396,20 @@ button {
 /* Message après les tentatives */
 
 .too-late {
-
   margin-top: 25px;
-
   font-family: Georgia, serif;
-
   font-size: 26px;
-
   font-style: italic;
-
   animation:
     appear .3s ease;
 }
 
 .too-late span {
-
   display: block;
-
   margin-top: 8px;
-
   font-family: Arial, sans-serif;
-
   font-size: 14px;
-
   font-style: normal;
-
   color: #786f63;
 }
 
@@ -443,77 +419,51 @@ button {
 ========================= */
 
 .popup-overlay {
-
   display: none;
-
   position: fixed;
-
   inset: 0;
-
   background:
     rgba(39,35,30,.48);
-
   align-items: center;
-
   justify-content: center;
-
   padding: 20px;
-
   z-index: 3000;
 }
 
 .popup {
-
   width: min(90%, 420px);
-
   background: #fffaf1;
-
   border-radius: 24px;
-
   padding: 38px 30px;
-
   text-align: center;
-
   box-shadow:
     0 25px 70px rgba(0,0,0,.25);
-
   animation:
     popupIn .25s ease;
 }
 
 .popup-icon {
-
   font-size: 43px;
-
   margin-bottom: 12px;
 }
 
 .popup h2 {
-
   font-family: Georgia, serif;
-
   font-style: italic;
-
   font-size: 30px;
-
   margin:
     0 0 10px;
 }
 
 .popup p {
-
   color: #786f63;
-
   line-height: 1.5;
-
   margin:
     0 0 25px;
 }
 
 .popup button {
-
   background: #27231e;
-
   color: white;
 }
 
@@ -523,38 +473,28 @@ button {
 ========================= */
 
 @keyframes popupIn {
-
   from {
-
     opacity: 0;
-
     transform:
       scale(.9);
   }
 
   to {
-
     opacity: 1;
-
     transform:
       scale(1);
   }
 }
 
 @keyframes appear {
-
   from {
-
     opacity: 0;
-
     transform:
       translateY(8px);
   }
 
   to {
-
     opacity: 1;
-
     transform:
       translateY(0);
   }
@@ -568,70 +508,50 @@ button {
 @media (max-width: 600px) {
 
   .envelope {
-
     width: 280px;
-
     height: 185px;
   }
 
   .flap {
-
     border-left-width: 140px;
-
     border-right-width: 140px;
-
     border-top-width: 100px;
   }
 
   .envelope-front {
-
     border-left-width: 140px;
-
     border-right-width: 140px;
-
     border-bottom-width: 100px;
   }
 
   .side-left {
-
     border-left-width: 140px;
-
     border-top-width: 92px;
-
     border-bottom-width: 92px;
   }
 
   .side-right {
-
     border-right-width: 140px;
-
     border-top-width: 92px;
-
     border-bottom-width: 92px;
   }
 
   .letter {
-
     width: 220px;
-
     height: 155px;
-
     left: 30px;
   }
 
   .card {
-
     padding:
       45px 25px;
   }
 
   h1 {
-
     font-size: 38px;
   }
 
   .message {
-
     font-size: 16px;
   }
 
@@ -652,12 +572,22 @@ button {
   border-radius: 20px;
   object-fit: contain;
 }
+
 </style>
 
 </head>
 
 
 <body>
+
+
+<!-- =========================
+     MUSIQUE
+========================= -->
+
+<audio id="birthdayMusic" preload="auto">
+  <source src="musique.mp3" type="audio/mpeg">
+</audio>
 
 
 <!-- =========================
@@ -669,10 +599,8 @@ button {
   <div class="envelope-wrapper">
 
     <div class="envelope-title">
-
       Hey Zina ❤️! Tu as reçu un message
       de la plus haute importance d'Abdelheq
-
     </div>
 
 
@@ -698,15 +626,12 @@ button {
 
 
     <div class="click-hint">
-
       Clique sur l'enveloppe pour l'ouvrir
-
     </div>
 
   </div>
 
 </div>
-
 
 
 <!-- =========================
@@ -718,7 +643,6 @@ button {
   <div class="page">
 
     <div class="card">
-
 
       <div class="heart">
       </div>
@@ -734,14 +658,16 @@ button {
 
 
       <p class="message">
-        Tu dois <u>obligatoirement</u> cliquer sur un <b>Oui</b> ou un <b>Non</b><BR></p>
-        Je t’offre un cadeau si tu cliques sur
-        <b>Oui</b> !
+        Tu dois <u>obligatoirement</u> cliquer sur un <b>Oui</b> ou un <b>Non</b><BR>
+      </p>
 
-        Mais si, par malheur,
-        tu cliques sur <b>Non</b>,
+      Je t’offre un cadeau si tu cliques sur
+      <b>Oui</b> !
 
-        <u>tu m’offres</u> un cadeau !
+      Mais si, par malheur,
+      tu cliques sur <b>Non</b>,
+
+      <u>tu m’offres</u> un cadeau !
 
       </p>
 
@@ -794,23 +720,17 @@ button {
   <div class="popup">
 
     <div class="popup-icon">
-
       Happy Birthday 🎂🎉😊
-
     </div>
 
 
     <p>
-
       Viens récupérer ton 🎁
-
     </p>
 
 
     <button id="closePopup">
-
       Fermer (un dernier clic Zina)
-
     </button>
 
   </div>
@@ -834,6 +754,9 @@ const envelopeScreen =
 
 const invitationPage =
   document.getElementById("invitationPage");
+
+const birthdayMusic =
+  document.getElementById("birthdayMusic");
 
 
 /*
@@ -863,6 +786,18 @@ envelope.addEventListener(
 
 
     /*
+       Lance la musique au clic
+       sur l'enveloppe.
+
+       Le clic utilisateur permet
+       au navigateur d'autoriser
+       la lecture audio.
+    */
+
+    birthdayMusic.play().catch(() => {});
+
+
+    /*
        Empêche plusieurs clics
     */
 
@@ -883,10 +818,11 @@ envelope.addEventListener(
 
 
     /*
-       ⭐ FAIT VIBRER LE BOUTON VERT OUI
+       FAIT VIBRER LE BOUTON VERT OUI
     */
 
     noButton.classList.remove("vibrate");
+
 
     /*
        Force le navigateur à recalculer
@@ -940,30 +876,38 @@ function escapeNo() {
      À la 5e tentative
   */
 
-if (attempts >= 5) {
+  if (attempts >= 5) {
 
-  tooLate.innerHTML = `
-    <div class="too-late">
-      Oh quel dommage 😁😊😂
-      <span>
-        Tu n'as plus le choix que de cliquer sur Non.
-      </span>
-    </div>
-  `;
+    tooLate.innerHTML = `
+      <div class="too-late">
+        Oh quel dommage 😁😊😂
+        <span>
+          Tu n'as plus le choix que de cliquer sur Non.
+        </span>
+      </div>
+    `;
 
-  // Faire disparaître le bouton Oui
-  noButton.style.display = "none";
 
-  // Garder le bouton Non visible
-  yesButton.style.display = "inline-block";
+    // Faire disparaître le bouton Oui
 
-  // Relancer proprement l'animation
-  yesButton.classList.remove("vibrate");
-  void yesButton.offsetWidth;
-  //yesButton.classList.add("vibrate");
+    noButton.style.display = "none";
 
-  return;
-}
+
+    // Garder le bouton Non visible
+
+    yesButton.style.display = "inline-block";
+
+
+    // Relancer proprement l'animation
+
+    yesButton.classList.remove("vibrate");
+
+    void yesButton.offsetWidth;
+
+    // yesButton.classList.add("vibrate");
+
+    return;
+  }
 
 
   /*
@@ -1074,7 +1018,8 @@ closePopup.addEventListener(
             src="Anniversaire.jpg"
             alt="Joyeux anniversaire Zina"
             class="birthday-image"
-          >		   
+          >
+
         </div>
 
       </div>
@@ -1090,3 +1035,4 @@ closePopup.addEventListener(
 
 </body>
 </html>
+```
