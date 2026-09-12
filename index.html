@@ -796,6 +796,7 @@ function launchSnakeFlow() {
 
   const ctx = canvas.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
   let w = window.innerWidth;
   let h = window.innerHeight;
 
@@ -804,48 +805,167 @@ function launchSnakeFlow() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const r = envelope.getBoundingClientRect();
+
+  // Le point de départ est exactement au centre de l'enveloppe.
   const ox = r.left + r.width / 2;
   const oy = r.top + r.height / 2;
 
-  const particles = [];
-  const colors = ["#e85d75","#f3b33d","#69b578","#5b8def","#b56ad9","#f07c4f"];
+  const colors = [
+    "#e85d75",
+    "#f3b33d",
+    "#69b578",
+    "#5b8def",
+    "#b56ad9",
+    "#f07c4f"
+  ];
 
-  function addParticle(i) {
-    const side = i % 2 ? 1 : -1;
-    const angle = -Math.PI / 2 + side * (0.18 + Math.random() * 0.42);
-    const speed = 7 + Math.random() * 7;
+  const particles = [];
+
+  /*
+     PHASE 1
+     Un noyau très dense sort de l'enveloppe.
+  */
+  function burstParticle(i) {
+
+    const angle =
+      -Math.PI / 2 +
+      (Math.random() - 0.5) * 1.35;
+
+    const speed =
+      10 + Math.random() * 10;
 
     particles.push({
-      x: ox + (Math.random() - .5) * 32,
-      y: oy + (Math.random() - .5) * 20,
+      x: ox + (Math.random() - 0.5) * 20,
+      y: oy + (Math.random() - 0.5) * 15,
+
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      gravity: .10 + Math.random() * .065,
-      size: 4 + Math.random() * 7,
+
+      gravity: 0.11 + Math.random() * 0.07,
+
+      size: 4 + Math.random() * 8,
+
       rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - .5) * .28,
+      rotationSpeed: (Math.random() - 0.5) * 0.32,
+
       phase: Math.random() * Math.PI * 2,
-      wave: .5 + Math.random() * 1.1,
+      wave: 0.5 + Math.random() * 1.3,
+
       life: 0,
-      maxLife: 125 + Math.random() * 105,
+      maxLife: 135 + Math.random() * 110,
+
       color: colors[Math.floor(Math.random() * colors.length)],
-      shape: Math.random() < .18 ? "star" : Math.random() < .45 ? "circle" : "rect"
+
+      shape:
+        Math.random() < 0.18
+          ? "star"
+          : Math.random() < 0.5
+            ? "circle"
+            : "rect"
     });
   }
 
-  for (let i = 0; i < 190; i++) {
-    setTimeout(() => addParticle(i), i * 3.5);
+  /*
+     PHASE 2
+     De véritables "serpents" de confettis partent
+     dans plusieurs directions.
+  */
+  function snakeParticle(index, snake) {
+
+    const centerAngle = [
+      -2.55,
+      -2.05,
+      -1.55,
+      -1.10,
+      -0.60
+    ][snake];
+
+    const angle =
+      centerAngle +
+      (Math.random() - 0.5) * 0.30;
+
+    const speed =
+      6 + Math.random() * 5;
+
+    particles.push({
+      x: ox + (Math.random() - 0.5) * 14,
+      y: oy + (Math.random() - 0.5) * 12,
+
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+
+      gravity: 0.095 + Math.random() * 0.055,
+
+      size: 4 + Math.random() * 7,
+
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.25,
+
+      phase:
+        snake * 1.7 +
+        index * 0.18,
+
+      wave:
+        0.8 + snake * 0.12,
+
+      life: 0,
+      maxLife:
+        145 + Math.random() * 120,
+
+      color:
+        colors[(index + snake) % colors.length],
+
+      shape:
+        Math.random() < 0.15
+          ? "star"
+          : Math.random() < 0.45
+            ? "circle"
+            : "rect"
+    });
   }
 
-  function drawStar(r) {
-    ctx.beginPath();
-    for (let i = 0; i < 10; i++) {
-      const rr = i % 2 ? r * .42 : r;
-      const a = -Math.PI / 2 + i * Math.PI / 5;
-      const x = Math.cos(a) * rr;
-      const y = Math.sin(a) * rr;
-      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  // Explosion compacte.
+  for (let i = 0; i < 150; i++) {
+    setTimeout(() => burstParticle(i), i * 2);
+  }
+
+  // Cinq flux successifs pour donner une vraie impression de serpent.
+  for (let snake = 0; snake < 5; snake++) {
+    for (let i = 0; i < 38; i++) {
+      setTimeout(
+        () => snakeParticle(i, snake),
+        120 + snake * 85 + i * 8
+      );
     }
+  }
+
+  function drawStar(radius) {
+
+    ctx.beginPath();
+
+    for (let i = 0; i < 10; i++) {
+
+      const rr =
+        i % 2 === 0
+          ? radius
+          : radius * 0.42;
+
+      const a =
+        -Math.PI / 2 +
+        i * Math.PI / 5;
+
+      const x =
+        Math.cos(a) * rr;
+
+      const y =
+        Math.sin(a) * rr;
+
+      if (i === 0)
+        ctx.moveTo(x, y);
+      else
+        ctx.lineTo(x, y);
+    }
+
     ctx.closePath();
     ctx.fill();
   }
@@ -853,80 +973,195 @@ function launchSnakeFlow() {
   let frame = 0;
 
   function animate() {
+
     ctx.clearRect(0, 0, w, h);
 
     for (let i = particles.length - 1; i >= 0; i--) {
+
       const p = particles[i];
+
       p.life++;
 
-      // Ondulation latérale = effet serpent.
-      p.x += p.vx + Math.sin(p.life * .10 + p.phase) * p.wave;
+      /*
+         Trajectoire ondulante :
+         le mouvement latéral augmente légèrement
+         pour donner l'impression d'un ruban.
+      */
+      const wave =
+        Math.sin(
+          p.life * 0.105 +
+          p.phase
+        ) * p.wave;
+
+      p.x += p.vx + wave;
       p.y += p.vy;
+
+      // Gravité progressive.
       p.vy += p.gravity;
-      p.vx *= .996;
+
+      // Résistance de l'air.
+      p.vx *= 0.996;
+
+      // Rotation naturelle.
       p.rotation += p.rotationSpeed;
 
-      const progress = p.life / p.maxLife;
-      const alpha = progress > .72
-        ? Math.max(0, 1 - (progress - .72) / .28)
-        : 1;
+      const progress =
+        p.life / p.maxLife;
+
+      // Disparition douce à la fin.
+      const alpha =
+        progress > 0.70
+          ? Math.max(
+              0,
+              1 -
+              (progress - 0.70) / 0.30
+            )
+          : 1;
 
       ctx.save();
+
       ctx.globalAlpha = alpha;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation);
-      ctx.fillStyle = p.color;
+
+      ctx.translate(
+        p.x,
+        p.y
+      );
+
+      ctx.rotate(
+        p.rotation
+      );
+
+      ctx.fillStyle =
+        p.color;
 
       if (p.shape === "star") {
+
         drawStar(p.size);
+
       } else if (p.shape === "circle") {
+
         ctx.beginPath();
-        ctx.arc(0, 0, p.size * .55, 0, Math.PI * 2);
+
+        ctx.arc(
+          0,
+          0,
+          p.size * 0.55,
+          0,
+          Math.PI * 2
+        );
+
         ctx.fill();
+
       } else {
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * .65);
+
+        ctx.fillRect(
+          -p.size / 2,
+          -p.size / 2,
+          p.size,
+          p.size * 0.65
+        );
       }
 
       ctx.restore();
 
-      if (p.life >= p.maxLife || p.y > h + 90 || p.x < -100 || p.x > w + 100) {
+      if (
+        p.life >= p.maxLife ||
+        p.y > h + 100 ||
+        p.x < -120 ||
+        p.x > w + 120
+      ) {
+
         particles.splice(i, 1);
       }
     }
 
     frame++;
-    if (particles.length || frame < 150) {
-      requestAnimationFrame(animate);
+
+    if (
+      particles.length > 0 ||
+      frame < 220
+    ) {
+
+      requestAnimationFrame(
+        animate
+      );
+
     } else {
-      ctx.clearRect(0, 0, w, h);
+
+      ctx.clearRect(
+        0,
+        0,
+        w,
+        h
+      );
     }
   }
 
   animate();
 
-  // Explosion supplémentaire au point de départ.
+  /*
+     EXPLOSIONS CANVAS-C0NFETTI
+     Elles renforcent le jaillissement sans remplacer
+     l'animation Snake Flow.
+  */
   if (typeof confetti === "function") {
+
+    // Explosion directement sur l'enveloppe.
     confetti({
-      particleCount: 110,
-      spread: 90,
-      startVelocity: 40,
-      origin: { x: ox / w, y: oy / h }
+      particleCount: 130,
+      spread: 75,
+      startVelocity: 48,
+      gravity: 0.85,
+      scalar: 1.05,
+      origin: {
+        x: ox / w,
+        y: oy / h
+      }
     });
 
+    // Deux tirs latéraux.
     setTimeout(() => {
+
       confetti({
-        particleCount: 85,
-        spread: 105,
-        startVelocity: 27,
-        origin: { x: .15, y: .70 }
+        particleCount: 95,
+        angle: 62,
+        spread: 65,
+        startVelocity: 38,
+        origin: {
+          x: 0,
+          y: 0.72
+        }
       });
+
       confetti({
-        particleCount: 85,
-        spread: 105,
-        startVelocity: 27,
-        origin: { x: .85, y: .70 }
+        particleCount: 95,
+        angle: 118,
+        spread: 65,
+        startVelocity: 38,
+        origin: {
+          x: 1,
+          y: 0.72
+        }
       });
-    }, 300);
+
+    }, 420);
+
+    // Dernière pluie au-dessus de la page.
+    setTimeout(() => {
+
+      confetti({
+        particleCount: 120,
+        spread: 130,
+        startVelocity: 24,
+        gravity: 0.65,
+        scalar: 0.9,
+        origin: {
+          x: 0.5,
+          y: 0.05
+        }
+      });
+
+    }, 850);
   }
 }
 
