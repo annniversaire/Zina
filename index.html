@@ -572,6 +572,55 @@ button {
   object-fit: contain;
 }
 
+
+/* CONTRÔLES PAGE FINALE */
+.final-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+.final-controls .click-hint { margin-top: 0; }
+.replay-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #27231e;
+  color: white;
+  text-decoration: none;
+  font-size: 25px;
+  line-height: 1;
+  box-shadow: 0 6px 16px rgba(39,35,30,.18);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.replay-button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(39,35,30,.25);
+}
+.donate-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: #ffc439;
+  color: #111;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 5px 14px rgba(0,0,0,.12);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.donate-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(0,0,0,.18);
+}
+.paypal-mark { font-size: 14px; color: #003087; }
+
 </style>
 
 </head>
@@ -743,6 +792,43 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
 
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script>
+    // PayPal Donate est injecté dynamiquement dans invitationPage.
+    // La délégation sur document garantit que le clic fonctionne.
+    document.addEventListener("click", function (event) {
+      const donateButton = event.target.closest("#donateLink");
+
+      if (!donateButton) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      responsePopup.style.display = "flex";
+
+      const popupIcon = responsePopup.querySelector(".popup-icon");
+      const popupTitle = responsePopup.querySelector(".popup h2");
+      const popupText = responsePopup.querySelector("p");
+      const popupButton = responsePopup.querySelector("#closePopup");
+
+      if (popupIcon) {
+        popupIcon.textContent = "Sérieusement! Tu as cliqué sur Donate 😭";
+      }
+
+      if (popupTitle) {
+        popupTitle.textContent = "";
+      }
+
+      if (popupText) {
+        popupText.textContent =
+          "Merci pour ta générosité ! mais la fondation accepte uniquement les dons en gâteaux 🎂";
+      }
+
+      if (popupButton) {
+        popupButton.textContent = "Aller arrête de cliquer maintenant stp!!!";
+      }
+    });
+
+</script>
 
 <script>
 
@@ -1418,6 +1504,32 @@ closePopup.addEventListener(
             alt="Joyeux anniversaire Zina"
             class="birthday-image"
           >
+
+          <div class="final-controls">
+
+            <div class="click-hint">
+              Rejouer
+              <a
+                id="replayAnimation"
+                class="replay-button"
+                href="https://annniversaire.github.io/Quiz"
+                aria-label="Rejouer l'animation complète"
+                title="Rejouer l'animation complète"
+              >↻</a>
+            </div>
+
+            <div class="click-hint">
+              Soutenez la fondation BELGROUM qui oeuvre au bien-être de la famille BELGROUM 💙
+              <br><br>
+              <button
+                type="button"
+                class="donate-link"
+                id="donateLink"
+                aria-label="Soutenir la fondation BELGROUM"
+              ><span class="paypal-mark">PayPal Donate</span></button>
+            </div>
+
+          </div>
 
         </div>
 
