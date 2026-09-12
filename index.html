@@ -579,6 +579,10 @@ button {
 
 <body>
 
+<canvas id="snakeConfettiCanvas" aria-hidden="true"
+style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
+
+
 
 <!-- =========================
      MUSIQUE
@@ -738,6 +742,8 @@ button {
 
 
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
 <script>
 
 
@@ -779,6 +785,162 @@ const tooLate =
    OUVERTURE ENVELOPPE
 ========================= */
 
+
+/* =========================================================
+   🎉 SNAKE FLOW — jaillissement depuis l'enveloppe
+   ========================================================= */
+
+function launchSnakeFlow() {
+  const canvas = document.getElementById("snakeConfettiCanvas");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let w = window.innerWidth;
+  let h = window.innerHeight;
+
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const r = envelope.getBoundingClientRect();
+  const ox = r.left + r.width / 2;
+  const oy = r.top + r.height / 2;
+
+  const particles = [];
+  const colors = ["#e85d75","#f3b33d","#69b578","#5b8def","#b56ad9","#f07c4f"];
+
+  function addParticle(i) {
+    const side = i % 2 ? 1 : -1;
+    const angle = -Math.PI / 2 + side * (0.18 + Math.random() * 0.42);
+    const speed = 7 + Math.random() * 7;
+
+    particles.push({
+      x: ox + (Math.random() - .5) * 32,
+      y: oy + (Math.random() - .5) * 20,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      gravity: .10 + Math.random() * .065,
+      size: 4 + Math.random() * 7,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - .5) * .28,
+      phase: Math.random() * Math.PI * 2,
+      wave: .5 + Math.random() * 1.1,
+      life: 0,
+      maxLife: 125 + Math.random() * 105,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shape: Math.random() < .18 ? "star" : Math.random() < .45 ? "circle" : "rect"
+    });
+  }
+
+  for (let i = 0; i < 190; i++) {
+    setTimeout(() => addParticle(i), i * 3.5);
+  }
+
+  function drawStar(r) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const rr = i % 2 ? r * .42 : r;
+      const a = -Math.PI / 2 + i * Math.PI / 5;
+      const x = Math.cos(a) * rr;
+      const y = Math.sin(a) * rr;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  let frame = 0;
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life++;
+
+      // Ondulation latérale = effet serpent.
+      p.x += p.vx + Math.sin(p.life * .10 + p.phase) * p.wave;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.vx *= .996;
+      p.rotation += p.rotationSpeed;
+
+      const progress = p.life / p.maxLife;
+      const alpha = progress > .72
+        ? Math.max(0, 1 - (progress - .72) / .28)
+        : 1;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.fillStyle = p.color;
+
+      if (p.shape === "star") {
+        drawStar(p.size);
+      } else if (p.shape === "circle") {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * .55, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * .65);
+      }
+
+      ctx.restore();
+
+      if (p.life >= p.maxLife || p.y > h + 90 || p.x < -100 || p.x > w + 100) {
+        particles.splice(i, 1);
+      }
+    }
+
+    frame++;
+    if (particles.length || frame < 150) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, w, h);
+    }
+  }
+
+  animate();
+
+  // Explosion supplémentaire au point de départ.
+  if (typeof confetti === "function") {
+    confetti({
+      particleCount: 110,
+      spread: 90,
+      startVelocity: 40,
+      origin: { x: ox / w, y: oy / h }
+    });
+
+    setTimeout(() => {
+      confetti({
+        particleCount: 85,
+        spread: 105,
+        startVelocity: 27,
+        origin: { x: .15, y: .70 }
+      });
+      confetti({
+        particleCount: 85,
+        spread: 105,
+        startVelocity: 27,
+        origin: { x: .85, y: .70 }
+      });
+    }, 300);
+  }
+}
+
+window.addEventListener("resize", () => {
+  const canvas = document.getElementById("snakeConfettiCanvas");
+  if (!canvas) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  const ctx = canvas.getContext("2d");
+  if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+});
+
+
 envelope.addEventListener(
   "click",
   function () {
@@ -812,6 +974,9 @@ envelope.addEventListener(
     /*
        Ouvre l'enveloppe
     */
+
+    // 🎉 Snake Flow
+    launchSnakeFlow();
 
     envelope.classList.add("open");
 
